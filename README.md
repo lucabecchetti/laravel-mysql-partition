@@ -1,4 +1,4 @@
-# Laravel MySQL Partition extension
+# Laravel MySQL Partition
 
 
 **Laravel-mysql-partition** is a useful Laravel package to easily work with [MySQL Partition](https://dev.mysql.com/doc/refman/5.7/en/partitioning.html). please check the documentation for your MySQL version. Partitioning require a MySQL's version >= 5.1.0
@@ -12,6 +12,10 @@
 
 
 ## Installation
+<p align="center" >
+  <img src="shell.gif" width="100%" alt="InAppNotify" title="InAppNotify">
+</p>
+
 
 Add the package using composer:
 
@@ -64,7 +68,10 @@ class CreatePartitionedTable extends Migration {
             $table->timestamps();
             $table->primary(['id','date']);
         });
-  
+        
+        // Force autoincrement of one field in composite primary key
+  		Schema::forceAutoIncrement('partitioned', 'id');
+  		
   		// Make partition by LIST
         Schema::partitionByList('partitioned', 'id',
             [
@@ -187,6 +194,28 @@ Schema::partitionByYearsAndMonths('test_part', 'date', 2019);
 ```
 
 You can omit the end year of range, and current year will be used:
+
+## Composite primary key
+
+To partition a table, columns must be an index, if you want to use a different column from **id** you have to change this line of you migration file:
+
+
+```
+$table->bigIncrements('id');
+```
+
+to this, creating a composite primary key
+
+```
+$table->bigInteger('id');
+$table->primary(['id','date']);
+```
+
+> **Note**: Using the above code you'll lose the autoincrement for id field, you can force it before run partition, if you need, with this code:
+
+```
+Schema::forceAutoIncrement('partitioned', 'id');
+```
 
 ## Querying parition with Eloquent
 
