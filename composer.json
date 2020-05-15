@@ -1,0 +1,54 @@
+{
+    "name": "brokenice/laravel-mysql-partition",
+    "description": "MySQL Partition extension for Laravel.",
+    "scripts": {
+        "test": "phpunit -c phpunit.xml.dist",
+        "test:unit": "phpunit -c phpunit.xml.dist --testsuite unit",
+        "test:integration": "phpunit -c phpunit.xml.dist --testsuite integration"
+    },
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Luca Becchetti",
+            "email": "luca.becchetti@brokenice.it"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.9",
+        "ext-pdo": "*",
+        "ext-json": "*",
+        "illuminate/database": "^5.2|^6.0|^7.0",
+        "geo-io/wkb-parser": "^1.0",
+        "ext-mbstring": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.8|~5.7",
+        "mockery/mockery": "^0.9.9",
+        "laravel/laravel": "^5.2|^6.0|^7.0",
+        "doctrine/dbal": "^2.5",
+        "laravel/browser-kit-testing": "^2.0",
+        "php-coveralls/php-coveralls": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Brokenice\\LaravelMysqlPartition\\": "src/"
+        }
+    },
+    "autoload-dev" : {
+        "classmap" : [
+            "tests/Unit",
+            "tests/Integration"
+        ]
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        },
+        "laravel": {
+            "providers": [
+                "Brokenice\\LaravelMysqlPartition\\PartitionServiceProvider"
+            ]
+        }
+    }
+}
