@@ -41,7 +41,7 @@ class PartitionsCommand extends Command
                     ['PARTITION_NAME', 'SUBPARTITION_NAME', 'PARTITION_ORDINAL_POSITION', 'TABLE_ROWS', 'PARTITION_METHOD'],
                     collect($partitions)->map(static function ($item) { return (array) $item;})
                 );
-            break;
+                break;
             case 'delete':
                 Schema::deletePartition($this->option('table'), $this->option('partitions'));
                 $this->info('Partition '.implode(',', $this->option('partitions')).' did delete successfully!');
@@ -81,7 +81,8 @@ class PartitionsCommand extends Command
                         break;
                     case "RANGE":
                         $this->checkForOptions(['column']);
-                        Schema::partitionByRange($this->option('table'), $this->option('column'), [], !$this->option('excludeFuture'));
+                        $partitions = $this->askRangePartitions();
+                        Schema::partitionByRange($this->option('table'), $this->option('column'), $partitions, !$this->option('excludeFuture'));
                         $this->info('Table did partitioned successfully!');
                         break;
                     case "YEAR":
@@ -158,6 +159,22 @@ class PartitionsCommand extends Command
                 $items = explode(',', $this->ask('Enter a comma separated value for list ' . $i));
             }while( !is_array($items) || count($items) <= 0);
             $partitions[] = new Partition('list'.$i, Partition::LIST_TYPE, $items);
+        }
+        return $partitions;
+    }
+
+    /**
+     * Ask user to build list partitions
+     * @return array
+     */
+    private function askRangePartitions()
+    {
+        $partitions = [];
+        do{
+            $items = explode(',', $this->ask('Enter a comma separated value for partitions of:'.$this->option('column')));
+        }while( !is_array($items) || count($items) <= 0);
+        foreach ($items as $value) {
+            $partitions[] = new Partition('range' . $value, Partition::RANGE_TYPE, $value);
         }
         return $partitions;
     }

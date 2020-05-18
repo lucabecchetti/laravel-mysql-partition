@@ -281,6 +281,99 @@ php artisan laravel-mysql-partition
 
 Form detail infomration on actions, refere to : [this link](https://dev.mysql.com/doc/refman/5.7/en/partitioning-maintenance.html).
 
+### List
+```shell
+php artisan laravel-mysql-partition list --table=partitioned
+```
+
+### Create
+
+```shell
+// Create by RANGE
+php artisan laravel-mysql-partition create --table=partitioned --column="YEAR(date)" --method=RANGE
+
+Enter a comma separated value for partitions of:YEAR(date):
+ > 2019,2020,2021
+
+Table did partitioned successfully!
+
+// Create by LIST
+php artisan laravel-mysql-partition create --table=partitioned --column="id" --method=LIST
+
+How many partition do you want to create?:
+ > 3
+
+ Enter a comma separated value for list 0:
+ > 1,2,3
+
+ Enter a comma separated value for list 1:
+ > 4,5,6
+
+ Enter a comma separated value for list 2:
+ > 7,8,9
+
+Table did partitioned successfully!
+
+// Create by YEAR
+php artisan laravel-mysql-partition create --table=partitioned --column=date --method=YEAR
+
+Enter start year for partition::
+ > 2016
+
+ Enter end year for partition (leave blank for current year)::
+ > 2020
+
+Table did partitioned successfully!
+
+// Create by KEY
+php artisan laravel-mysql-partition create --table=partitioned --method=KEY --number=10
+
+Table did partitioned successfully!
+
+// Create by HASH
+php artisan laravel-mysql-partition create --table=partitioned --method=HASH --column="MONTH(date)" --number=10
+
+Table did partitioned successfully!
+```
+
+### Delete
+```
+php artisan laravel-mysql-partition delete --table=partitioned --partitions=year2018,year2020
+Partition year2018,year2020 did delete successfully!
+```
+
+### Truncate
+```
+php artisan laravel-mysql-partition truncate --table=partitioned --partitions=year2019,year2020
+Partition year2019,year2020 did truncate successfully!
+```
+
+### Optimize
+```
+php artisan laravel-mysql-partition optimize --table=partitioned --partitions=year2019,year2020
+```
+
+### Repair
+```
+php artisan laravel-mysql-partition repair --table=partitioned --partitions=year2019,year2020
+```
+
+### Check
+```
+php artisan laravel-mysql-partition check --table=partitioned --partitions=year2019,year2020
+```
+
+### Analyze
+```
+php artisan laravel-mysql-partition analyze --table=partitioned --partitions=year2019,year2020
+```
+
+### Rebuild
+```
+php artisan laravel-mysql-partition rebuild --table=partitioned --partitions=year2019,year2020
+Partitions year2019,year2020 did rebuilt successfully!
+```
+
 
 ## Tests
 
