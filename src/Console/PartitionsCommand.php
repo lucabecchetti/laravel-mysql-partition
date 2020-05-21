@@ -16,7 +16,7 @@ class PartitionsCommand extends Command
      */
     protected $signature = 'laravel-mysql-partition
                             {action : Action to perform} 
-                            {--table=} {--method=} {--number=} {--excludeFuture} {--column=} {--partitions=*}';
+                            {--database=} {--table=} {--method=} {--number=} {--excludeFuture} {--column=} {--partitions=*}';
 
     /**
      * The console command description.
@@ -36,7 +36,7 @@ class PartitionsCommand extends Command
         switch ($this->argument('action')) {
             case 'list':
                 $this->checkForOptions(['table']);
-                $partitions = Schema::getPartitionNames(env('DB_DATABASE'), $this->option('table'));
+                $partitions = Schema::getPartitionNames($this->option('database') ?: env('DB_DATABASE'), $this->option('table'));
                 $this->table(
                     ['PARTITION_NAME', 'SUBPARTITION_NAME', 'PARTITION_ORDINAL_POSITION', 'TABLE_ROWS', 'PARTITION_METHOD'],
                     collect($partitions)->map(static function ($item) { return (array) $item;})

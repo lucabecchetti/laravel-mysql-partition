@@ -247,9 +247,9 @@ class Schema extends IlluminateSchema
      * @param $table
      * @param string $field
      */
-    public static function forceAutoIncrement($table, $field = 'id')
+    public static function forceAutoIncrement($table, $field = 'id', $type='INTEGER')
     {
-        DB::statement("ALTER TABLE {$table} MODIFY {$field} INTEGER NOT NULL AUTO_INCREMENT");
+        DB::statement("ALTER TABLE {$table} MODIFY {$field} {$type} NOT NULL AUTO_INCREMENT");
     }
 
     /**
@@ -330,6 +330,11 @@ class Schema extends IlluminateSchema
     {
         return DB::select(DB::raw("ALTER TABLE {$table} CHECK PARTITION " . implode(', ', $partitions)));
     }
+
+    /**
+     * todo: Reorganize partition
+     * ALTER TABLE mytable REORGANIZE PARTITION future INTO ( PARTITION yearCurrent VALUES LESS THAN (yearCurrent+1), PARTITION future VALUES LESS THAN MAXVALUE);
+     */
 
     /**
      * Assert support for partition

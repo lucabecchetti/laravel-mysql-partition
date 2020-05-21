@@ -12,6 +12,13 @@ class QueryBuilder extends \Illuminate\Database\Query\Builder {
     private $partitions = [];
 
     /**
+     * DB name to override inside a query
+     *
+     * @var string
+     */
+    private $databaseName = null;
+
+    /**
      * Add a "partition" clause to the query.
      * @param array $partitions
      * @return $this
@@ -29,6 +36,25 @@ class QueryBuilder extends \Illuminate\Database\Query\Builder {
     public function partition($partition) {
         $this->partitions = [$partition];
         return $this;
+    }
+
+    /**
+     * Set database name
+     * @param $name
+     * @return $this
+     */
+    public function db($name)
+    {
+        $this->databaseName = $name;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getDb()
+    {
+        return $this->databaseName;
     }
 
     /**
