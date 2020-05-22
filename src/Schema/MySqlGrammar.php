@@ -2,7 +2,7 @@
 
 namespace Brokenice\LaravelMysqlPartition\Schema;
 
-use  Illuminate\Database\Query\Grammars\MysqlGrammar as IlluminateMySqlGrammar;
+use Illuminate\Database\Query\Grammars\MysqlGrammar as IlluminateMySqlGrammar;
 use Illuminate\Database\Query\Builder;
 
 class MySqlGrammar extends IlluminateMySqlGrammar

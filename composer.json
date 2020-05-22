@@ -20,7 +20,6 @@
         "ext-pdo": "*",
         "ext-json": "*",
         "illuminate/database": "^5.2|^6.0|^7.0",
-        "geo-io/wkb-parser": "^1.0",
         "ext-mbstring": "*"
     },
     "require-dev": {
