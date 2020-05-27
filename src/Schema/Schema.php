@@ -98,6 +98,30 @@ class Schema extends IlluminateSchema
     /**
      * @param $table
      * @param $column
+     */
+    public static function partitionByMonths($table, $column)
+    {
+        // Build query
+        $query = "ALTER TABLE {$table} PARTITION BY RANGE(MONTH({$column})) ( ";
+        $query .= "PARTITION `jan` VALUES LESS THAN (2),";
+        $query .= "PARTITION `feb` VALUES LESS THAN (3),";
+        $query .= "PARTITION `mar` VALUES LESS THAN (4),";
+        $query .= "PARTITION `apr` VALUES LESS THAN (5),";
+        $query .= "PARTITION `may` VALUES LESS THAN (6),";
+        $query .= "PARTITION `jun` VALUES LESS THAN (7),";
+        $query .= "PARTITION `jul` VALUES LESS THAN (8),";
+        $query .= "PARTITION `aug` VALUES LESS THAN (9),";
+        $query .= "PARTITION `sep` VALUES LESS THAN (10),";
+        $query .= "PARTITION `oct` VALUES LESS THAN (11),";
+        $query .= "PARTITION `nov` VALUES LESS THAN (12),";
+        $query .= "PARTITION `dec` VALUES LESS THAN (13)";
+        $query .= ")";
+        DB::unprepared(DB::raw($query));
+    }
+
+    /**
+     * @param $table
+     * @param $column
      * @param $startYear
      * @param null $endYear
      * @param bool $includeFuturePartition

@@ -91,6 +91,11 @@ class PartitionsCommand extends Command
                         Schema::partitionByYears($this->option('table'), $this->option('column'), $yearRanges[0], $yearRanges[1] ?: date('Y'));
                         $this->info('Table did partitioned successfully!');
                         break;
+                    case "MONTH":
+                        $this->checkForOptions(['column']);
+                        Schema::partitionByMonths($this->option('table'), $this->option('column'));
+                        $this->info('Table did partitioned successfully!');
+                        break;
                     case "KEY":
                         $this->checkForOptions(['number'], 'numeric');
                         Schema::partitionByKey($this->option('table'), $this->option('number'));
