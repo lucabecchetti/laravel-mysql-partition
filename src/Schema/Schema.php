@@ -98,11 +98,13 @@ class Schema extends IlluminateSchema
     /**
      * @param $table
      * @param $column
+     * @param null $schema
      */
-    public static function partitionByMonths($table, $column)
+    public static function partitionByMonths($table, $column, $schema=null)
     {
+        $appendSchema = $schema !== null ? ($schema.".") : '';
         // Build query
-        $query = "ALTER TABLE {$table} PARTITION BY RANGE(MONTH({$column})) ( ";
+        $query = "ALTER TABLE {$appendSchema}{$table} PARTITION BY RANGE(MONTH({$column})) ( ";
         $query .= "PARTITION `jan` VALUES LESS THAN (2),";
         $query .= "PARTITION `feb` VALUES LESS THAN (3),";
         $query .= "PARTITION `mar` VALUES LESS THAN (4),";
@@ -125,9 +127,11 @@ class Schema extends IlluminateSchema
      * @param $startYear
      * @param null $endYear
      * @param bool $includeFuturePartition
+     * @param null $schema
      */
-    public static function partitionByYearsAndMonths($table, $column, $startYear, $endYear = null, $includeFuturePartition = true)
+    public static function partitionByYearsAndMonths($table, $column, $startYear, $endYear = null, $includeFuturePartition = true, $schema=null)
     {
+        $appendSchema = $schema !== null ? ($schema.".") : '';
         self::assertSupport();
         $endYear = $endYear ?: date('Y');
         if ($startYear > $endYear){
@@ -139,7 +143,7 @@ class Schema extends IlluminateSchema
             $partitions[] = new Partition('year'.$year, Partition::RANGE_TYPE, $year+1);
         }
         // Build query
-        $query = "ALTER TABLE {$table} PARTITION BY RANGE(YEAR({$column})) SUBPARTITION BY HASH(MONTH({$column})) ( ";
+        $query = "ALTER TABLE {$appendSchema}{$table} PARTITION BY RANGE(YEAR({$column})) SUBPARTITION BY HASH(MONTH({$column})) ( ";
         $subPartitionsQuery = collect($partitions)->map(static function($partition) {
             return $partition->toSQL() . "(". collect(self::$month)->map(static function($month) use ($partition){
                 return "SUBPARTITION {$month}".($partition->value-1);
@@ -166,14 +170,14 @@ class Schema extends IlluminateSchema
      * @param $column
      * @param Partition[] $partitions
      * @param bool $includeFuturePartition
-     *
+     * @param null $schema
      * @static public
-     *
      */
-    public static function partitionByRange($table, $column, $partitions, $includeFuturePartition = true)
+    public static function partitionByRange($table, $column, $partitions, $includeFuturePartition = true, $schema=null)
     {
+        $appendSchema = $schema !== null ? ($schema.".") : '';
         self::assertSupport();
-        $query = "ALTER TABLE {$table} PARTITION BY RANGE({$column}) (";
+        $query = "ALTER TABLE {$appendSchema}{$table} PARTITION BY RANGE({$column}) (";
         $query .= self::implodePartitions($partitions);
         if($includeFuturePartition){
             $query .= ", PARTITION future VALUES LESS THAN (MAXVALUE)";
@@ -189,8 +193,9 @@ class Schema extends IlluminateSchema
      * @param $startYear
      * @param $endYear
      */
-    public static function partitionByYears($table, $column, $startYear, $endYear = null)
+    public static function partitionByYears($table, $column, $startYear, $endYear = null, $schema=null)
     {
+        $appendSchema = $schema !== null ? ($schema.".") : '';
         $endYear = $endYear ?: date('Y');
         if ($startYear > $endYear){
             throw new UnexpectedValueException("$startYear must be lower than $endYear");
@@ -199,7 +204,7 @@ class Schema extends IlluminateSchema
         foreach (range($startYear, $endYear) as $year) {
             $partitions[] = new Partition('year'.$year, Partition::RANGE_TYPE, $year+1);
         }
-        self::partitionByRange($table, "YEAR($column)", $partitions, true);
+        self::partitionByRange($table, "YEAR($column)", $partitions, true, $schema);
     }
 
     /**
@@ -208,14 +213,15 @@ class Schema extends IlluminateSchema
      * @param $table
      * @param $column
      * @param Partition[] $partitions
+     * @param null $schema
      * @static public
      *
-     * @throws UnsupportedPartitionException
      */
-    public static function partitionByList($table, $column, $partitions)
+    public static function partitionByList($table, $column, $partitions, $schema=null)
     {
+        $appendSchema = $schema !== null ? ($schema.".") : '';
         self::assertSupport();
-        $query = "ALTER TABLE {$table} PARTITION BY LIST({$column}) (";
+        $query = "ALTER TABLE {$appendSchema}{$table} PARTITION BY LIST({$column}) (";
         $query .= self::implodePartitions($partitions);
         $query .= ')';
         DB::unprepared(DB::raw($query));
@@ -227,13 +233,14 @@ class Schema extends IlluminateSchema
      * @param $table
      * @param $hashColumn
      * @param $partitionsNumber
+     * @param null $schema
      * @static public
-     *
      */
-    public static function partitionByHash($table, $hashColumn, $partitionsNumber)
+    public static function partitionByHash($table, $hashColumn, $partitionsNumber, $schema=null)
     {
+        $appendSchema = $schema !== null ? ($schema.".") : '';
         self::assertSupport();
-        $query = "ALTER TABLE {$table} PARTITION BY HASH({$hashColumn}) ";
+        $query = "ALTER TABLE {$appendSchema}{$table} PARTITION BY HASH({$hashColumn}) ";
         $query .= "PARTITIONS {$partitionsNumber};";
         DB::unprepared(DB::raw($query));
     }
@@ -243,13 +250,14 @@ class Schema extends IlluminateSchema
      * # WARNING 1: Are used all primary and unique keys
      * @param $table
      * @param $partitionsNumber
+     * @param null $schema
      * @static public
-     *
      */
-    public static function partitionByKey($table, $partitionsNumber)
-        {
+    public static function partitionByKey($table, $partitionsNumber, $schema=null)
+    {
+            $appendSchema = $schema !== null ? ($schema.".") : '';
             self::assertSupport();
-            $query = "ALTER TABLE {$table} PARTITION BY KEY() ";
+            $query = "ALTER TABLE {$appendSchema}{$table} PARTITION BY KEY() ";
             $query .= "PARTITIONS {$partitionsNumber};";
             DB::unprepared(DB::raw($query));
         }

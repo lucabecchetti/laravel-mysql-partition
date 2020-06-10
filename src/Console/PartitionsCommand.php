@@ -76,35 +76,35 @@ class PartitionsCommand extends Command
                     case "HASH":
                         $this->checkForOptions(['number'], 'numeric');
                         $this->checkForOptions(['column']);
-                        Schema::partitionByHash($this->option('table'), $this->option('column'), $this->option('number'));
+                        Schema::partitionByHash($this->option('table'), $this->option('column'), $this->option('number'), $this->option('database'));
                         $this->info('Table did partitioned successfully!');
                         break;
                     case "RANGE":
                         $this->checkForOptions(['column']);
                         $partitions = $this->askRangePartitions();
-                        Schema::partitionByRange($this->option('table'), $this->option('column'), $partitions, !$this->option('excludeFuture'));
+                        Schema::partitionByRange($this->option('table'), $this->option('column'), $partitions, !$this->option('excludeFuture'), $this->option('database'));
                         $this->info('Table did partitioned successfully!');
                         break;
                     case "YEAR":
                         $this->checkForOptions(['column']);
                         $yearRanges = $this->askforYearRange();
-                        Schema::partitionByYears($this->option('table'), $this->option('column'), $yearRanges[0], $yearRanges[1] ?: date('Y'));
+                        Schema::partitionByYears($this->option('table'), $this->option('column'), $yearRanges[0], $yearRanges[1] ?: date('Y'), $this->option('database'));
                         $this->info('Table did partitioned successfully!');
                         break;
                     case "MONTH":
                         $this->checkForOptions(['column']);
-                        Schema::partitionByMonths($this->option('table'), $this->option('column'));
+                        Schema::partitionByMonths($this->option('table'), $this->option('column'), $this->option('database'));
                         $this->info('Table did partitioned successfully!');
                         break;
                     case "KEY":
                         $this->checkForOptions(['number'], 'numeric');
-                        Schema::partitionByKey($this->option('table'), $this->option('number'));
+                        Schema::partitionByKey($this->option('table'), $this->option('number'), $this->option('database'));
                         $this->info('Table did partitioned successfully!');
                         break;
                     case "LIST":
                         $this->checkForOptions(['column']);
                         $partitions = $this->askListPartitions();
-                        Schema::partitionByList($this->option('table'), $this->option('column'), $partitions);
+                        Schema::partitionByList($this->option('table'), $this->option('column'), $partitions, $this->option('database'));
                         $this->info('Table did partitioned successfully!');
                         break;
                 }
