@@ -89,6 +89,7 @@ class Schema extends IlluminateSchema
             self::$have_partitioning = false;
         }
 
+        self::$already_checked = true;
         return self::$have_partitioning;
     }
 
