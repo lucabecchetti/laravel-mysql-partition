@@ -63,23 +63,33 @@ class Schema extends IlluminateSchema
      */
     public static function havePartitioning()
     {
-        if (!self::$already_checked && version_compare(self::version(), 5.1, '>=')) {
-            if (version_compare(self::version(), 5.6, '<')) {
-                if (DB::connection()->getPdo()->query("SHOW VARIABLES LIKE 'have_partitioning';")->fetchAll()) {
+        if (self::$already_checked) {
+            return self::$have_partitioning;
+        }
+        
+        if (version_compare(self::version(), 8, '>=')) {
+            self::$have_partitioning = true;
+        }
+        elseif (version_compare(self::version(), 5.6, '>=') && version_compare(self::version(), 8, '<')) {
+            // see http://dev.mysql.com/doc/refman/5.6/en/partitioning.html
+            $plugins = DB::connection()->getPdo()->query("SHOW PLUGINS")->fetchAll();
+            foreach ($plugins as $value) {
+                if ($value['Name'] === 'partition') {
                     self::$have_partitioning = true;
-                }
-            } else {
-                // see http://dev.mysql.com/doc/refman/5.6/en/partitioning.html
-                $plugins = DB::connection()->getPdo()->query("SHOW PLUGINS")->fetchAll();
-                foreach ($plugins as $value) {
-                    if ($value['Name'] === 'partition') {
-                        self::$have_partitioning = true;
-                        break;
-                    }
+                    break;
                 }
             }
-            self::$already_checked = true;
         }
+        elseif (version_compare(self::version(), 5.1, '>=') && version_compare(self::version(), 5.6, '<')) {
+            if (DB::connection()->getPdo()->query("SHOW VARIABLES LIKE 'have_partitioning';")->fetchAll()) {
+                self::$have_partitioning = true;
+            }
+        }
+        else {
+            self::$have_partitioning = false;
+        }
+
+        self::$already_checked = true;
         return self::$have_partitioning;
     }
 
