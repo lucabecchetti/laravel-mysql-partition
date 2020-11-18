@@ -19,7 +19,7 @@
         "php": ">=5.5.9",
         "ext-pdo": "*",
         "ext-json": "*",
-        "illuminate/database": "^5.2|^6.0|^7.0",
+        "illuminate/database": "^5.2|^6.0|^7.0|^8.0",
         "ext-mbstring": "*"
     },
     "require-dev": {
