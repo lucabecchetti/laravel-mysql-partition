@@ -66,7 +66,7 @@ class Schema extends IlluminateSchema
         if (self::$already_checked) {
             return self::$have_partitioning;
         }
-        
+
         if (version_compare(self::version(), 8, '>=')) {
             self::$have_partitioning = true;
         }
@@ -261,13 +261,14 @@ class Schema extends IlluminateSchema
      * @param $table
      * @param $partitionsNumber
      * @param null $schema
+     * @param string $key
      * @static public
      */
-    public static function partitionByKey($table, $partitionsNumber, $schema=null)
+    public static function partitionByKey($table, $partitionsNumber, $schema=null, $key = '')
     {
             $appendSchema = $schema !== null ? ($schema.".") : '';
             self::assertSupport();
-            $query = "ALTER TABLE {$appendSchema}{$table} PARTITION BY KEY() ";
+            $query = "ALTER TABLE {$appendSchema}{$table} PARTITION BY KEY({$key}) ";
             $query .= "PARTITIONS {$partitionsNumber};";
             DB::unprepared(DB::raw($query));
         }
