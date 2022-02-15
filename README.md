@@ -243,7 +243,7 @@ class Partitioned extends Model
 
 ```php
 Psy Shell v0.9.9 (PHP 7.3.6 — cli) by Justin Hileman
->>> use App\Partitioned;
+>>> use App\Models\Partitioned;
 >>> Partitioned::partition('name')->first();
 ```
 
@@ -251,7 +251,7 @@ Psy Shell v0.9.9 (PHP 7.3.6 — cli) by Justin Hileman
 
 ```php
 Psy Shell v0.9.9 (PHP 7.3.6 — cli) by Justin Hileman
->>> use App\Partitioned;
+>>> use App\Models\Partitioned;
 >>> Partitioned::partitions(['name', 'name1'])->first();
 ```
 
