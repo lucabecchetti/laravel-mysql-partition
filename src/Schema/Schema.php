@@ -45,11 +45,14 @@ class Schema extends IlluminateSchema
     public static function getPartitionNames($db, $table)
     {
         self::assertSupport();
-        return DB::select(DB::raw(
-            "SELECT `PARTITION_NAME`, `SUBPARTITION_NAME`, `PARTITION_ORDINAL_POSITION`, `TABLE_ROWS`, `PARTITION_METHOD` FROM `information_schema`.`PARTITIONS`"
+        $query = "SELECT `PARTITION_NAME`, `SUBPARTITION_NAME`, `PARTITION_ORDINAL_POSITION`, `TABLE_ROWS`, `PARTITION_METHOD` FROM `information_schema`.`PARTITIONS`"
             . " WHERE `TABLE_SCHEMA` = '" . $db
-            . "' AND `TABLE_NAME` = '" . $table . "'"
-        ));
+            . "' AND `TABLE_NAME` = '" . $table . "'";
+        if (version_compare(app()->version(), '10.0.0') >= 0) {
+            return DB::select(DB::raw($query)->getValue(new MySqlGrammar()));
+        } else {
+            return DB::select(DB::raw($query));
+        }
     }
 
     /**
@@ -66,7 +69,7 @@ class Schema extends IlluminateSchema
         if (self::$already_checked) {
             return self::$have_partitioning;
         }
-        
+
         if (version_compare(self::version(), 8, '>=')) {
             self::$have_partitioning = true;
         }
@@ -128,7 +131,11 @@ class Schema extends IlluminateSchema
         $query .= "PARTITION `nov` VALUES LESS THAN (12),";
         $query .= "PARTITION `dec` VALUES LESS THAN (13)";
         $query .= ")";
-        DB::unprepared(DB::raw($query));
+        if (version_compare(app()->version(), '10.0.0') >= 0) {
+            DB::unprepared(DB::raw($query)->getValue(new MySqlGrammar()));
+        } else {
+            DB::unprepared(DB::raw($query)->getValue());
+        }
     }
 
     /**
@@ -170,7 +177,11 @@ class Schema extends IlluminateSchema
         } else {
             $query .= ")";
         }
-        DB::unprepared(DB::raw($query));
+        if (version_compare(app()->version(), '10.0.0') >= 0) {
+            DB::unprepared(DB::raw($query)->getValue(DB::connection()->getQueryGrammar()));
+        } else {
+            DB::unprepared(DB::raw($query)->getValue());
+        }
     }
 
     /**
@@ -193,8 +204,11 @@ class Schema extends IlluminateSchema
             $query .= ", PARTITION future VALUES LESS THAN (MAXVALUE)";
         }
         $query = trim(trim($query),',') . ')';
-        DB::unprepared(DB::raw($query));
-
+        if (version_compare(app()->version(), '10.0.0') >= 0) {
+            DB::unprepared(DB::raw($query)->getValue(DB::connection()->getQueryGrammar()));
+        } else {
+            DB::unprepared(DB::raw($query)->getValue());
+        }
     }
 
     /**
@@ -234,7 +248,11 @@ class Schema extends IlluminateSchema
         $query = "ALTER TABLE {$appendSchema}{$table} PARTITION BY LIST({$column}) (";
         $query .= self::implodePartitions($partitions);
         $query .= ')';
-        DB::unprepared(DB::raw($query));
+        if (version_compare(app()->version(), '10.0.0') >= 0) {
+            DB::unprepared(DB::raw($query)->getValue(new MySqlGrammar()));
+        } else {
+            DB::unprepared(DB::raw($query)->getValue());
+        }
     }
 
     /**
@@ -252,7 +270,11 @@ class Schema extends IlluminateSchema
         self::assertSupport();
         $query = "ALTER TABLE {$appendSchema}{$table} PARTITION BY HASH({$hashColumn}) ";
         $query .= "PARTITIONS {$partitionsNumber};";
-        DB::unprepared(DB::raw($query));
+        if (version_compare(app()->version(), '10.0.0') >= 0) {
+            DB::unprepared(DB::raw($query)->getValue(new MySqlGrammar()));
+        } else {
+            DB::unprepared(DB::raw($query)->getValue());
+        }
     }
 
     /**
@@ -265,12 +287,16 @@ class Schema extends IlluminateSchema
      */
     public static function partitionByKey($table, $partitionsNumber, $schema=null)
     {
-            $appendSchema = $schema !== null ? ($schema.".") : '';
-            self::assertSupport();
-            $query = "ALTER TABLE {$appendSchema}{$table} PARTITION BY KEY() ";
-            $query .= "PARTITIONS {$partitionsNumber};";
-            DB::unprepared(DB::raw($query));
+        $appendSchema = $schema !== null ? ($schema.".") : '';
+        self::assertSupport();
+        $query = "ALTER TABLE {$appendSchema}{$table} PARTITION BY KEY() ";
+        $query .= "PARTITIONS {$partitionsNumber};";
+        if (version_compare(app()->version(), '10.0.0') >= 0) {
+            DB::unprepared(DB::raw($query)->getValue(new MySqlGrammar()));
+        } else {
+            DB::unprepared(DB::raw($query)->getValue());
         }
+    }
 
     /**
      * Check mysql version
@@ -335,7 +361,12 @@ class Schema extends IlluminateSchema
      */
     public static function optimizePartitions($table, $partitions)
     {
-        return DB::select(DB::raw("ALTER TABLE {$table} OPTIMIZE PARTITION " . implode(', ', $partitions)));
+        $query = "ALTER TABLE {$table} OPTIMIZE PARTITION " . implode(', ', $partitions);
+        if (version_compare(app()->version(), '10.0.0') >= 0) {
+            return DB::select(DB::raw($query)->getValue(new MySqlGrammar()));
+        } else {
+            return DB::select(DB::raw($query));
+        }
     }
 
     /**
@@ -346,7 +377,12 @@ class Schema extends IlluminateSchema
      */
     public static function analyzePartitions($table, $partitions)
     {
-        return DB::select(DB::raw("ALTER TABLE {$table} ANALYZE PARTITION " . implode(', ', $partitions)));
+        $query = "ALTER TABLE {$table} ANALYZE PARTITION " . implode(', ', $partitions);
+        if (version_compare(app()->version(), '10.0.0') >= 0) {
+            return DB::select(DB::raw($query)->getValue(new MySqlGrammar()));
+        } else {
+            return DB::select(DB::raw($query));
+        }
     }
 
     /**
@@ -359,7 +395,12 @@ class Schema extends IlluminateSchema
      */
     public static function repairPartitions($table, $partitions)
     {
-        return DB::select(DB::raw("ALTER TABLE {$table} REPAIR PARTITION " . implode(', ', $partitions)));
+        $query = "ALTER TABLE {$table} REPAIR PARTITION " . implode(', ', $partitions);
+        if (version_compare(app()->version(), '10.0.0') >= 0) {
+            return DB::select(DB::raw($query)->getValue(new MySqlGrammar()));
+        } else {
+            return DB::select(DB::raw($query));
+        }
     }
 
     /**
@@ -370,7 +411,12 @@ class Schema extends IlluminateSchema
      */
     public static function checkPartitions($table, $partitions)
     {
-        return DB::select(DB::raw("ALTER TABLE {$table} CHECK PARTITION " . implode(', ', $partitions)));
+        $query = "ALTER TABLE {$table} CHECK PARTITION " . implode(', ', $partitions);
+        if (version_compare(app()->version(), '10.0.0') >= 0) {
+            return DB::select(DB::raw($query)->getValue(new MySqlGrammar()));
+        } else {
+            return DB::select(DB::raw($query));
+        }
     }
 
     /**
