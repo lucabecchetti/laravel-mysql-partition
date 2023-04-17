@@ -2,12 +2,14 @@
 
 use Brokenice\LaravelMysqlPartition\MysqlConnection;
 use Brokenice\LaravelMysqlPartition\Schema\QueryBuilder;
+use PHPUnit\Framework\TestCase;
+use Illuminate\Support\Facades\App;
 
-class MysqlConnectionTest extends PHPUnit_Framework_TestCase
+class MysqlConnectionTest extends TestCase
 {
     private $mysqlConnection;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $mysqlConfig = ['driver' => 'mysql', 'prefix' => 'prefix', 'database' => 'database', 'name' => 'foo'];
         $this->mysqlConnection = new MysqlConnection(new PDOStub(), 'database', 'prefix', $mysqlConfig);
