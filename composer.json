@@ -19,15 +19,15 @@
         "php": ">=7.1",
         "ext-pdo": "*",
         "ext-json": "*",
-        "illuminate/database": "^5.2|^6.0|^7.0|^8.0|^9.0|^10.0",
+        "illuminate/database": "^5.2|^6.0|^7.0|^8.0|^9.0|^10.0|^11.0",
         "ext-mbstring": "*"
     },
     "require-dev": {
-        "phpunit/phpunit": "~4.8|~5.7|^9.5.10",
+        "phpunit/phpunit": "~4.8|~5.7|^9.5.10|^10.5",
         "mockery/mockery": "~1.3.0|^1.4.4",
         "laravel/laravel": "^5.2|^6.0|^7.0|^8.0|^9.0|^10.0",
         "doctrine/dbal": "^2.5|^3.5",
-        "laravel/browser-kit-testing": "^2.0|^6.4",
+        "laravel/browser-kit-testing": "^2.0|^6.4|^7.2",
         "php-coveralls/php-coveralls": "^2.0"
     },
     "autoload": {
