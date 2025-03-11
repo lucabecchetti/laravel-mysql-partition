@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\App;
 use Illuminate\Container\Container;
 use App\Service;
-use Mockery;
 
 class SchemaTest extends BaseTestCase
 {
