@@ -33,7 +33,7 @@ class MysqlConnection extends IlluminateMySqlConnection
         if (method_exists($grammar, 'setConnection')) {
             $grammar->setConnection($this);
         }
-        $this->setTablePrefix($this->tablePrefix);
+        $this->setQueryGrammar($grammar)->setTablePrefix($this->tablePrefix);
         return $grammar;
     }
 
