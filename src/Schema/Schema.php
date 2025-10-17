@@ -49,7 +49,7 @@ class Schema extends IlluminateSchema
             . " WHERE `TABLE_SCHEMA` = '" . $db
             . "' AND `TABLE_NAME` = '" . $table . "'";
         if (version_compare(static::getAppVersion(),'10.0.0') >= 0) {
-            return DB::select(DB::raw($query)->getValue(new MySqlGrammar()));
+            return DB::select(DB::raw($query)->getValue(new MySqlGrammar(DB::connection())));
         } else {
             return DB::select(DB::raw($query));
         }
@@ -129,7 +129,7 @@ class Schema extends IlluminateSchema
         $query .= "PARTITION `dec` VALUES LESS THAN (13)";
         $query .= ")";
         if (version_compare(static::getAppVersion(),'10.0.0') >= 0) {
-            DB::unprepared(DB::raw($query)->getValue(new MySqlGrammar()));
+            DB::unprepared(DB::raw($query)->getValue(new MySqlGrammar(DB::connection())));
         } else {
             DB::unprepared(DB::raw($query)->getValue());
         }
@@ -246,7 +246,7 @@ class Schema extends IlluminateSchema
         $query .= self::implodePartitions($partitions);
         $query .= ')';
         if (version_compare(static::getAppVersion(),'10.0.0') >= 0) {
-            DB::unprepared(DB::raw($query)->getValue(new MySqlGrammar()));
+            DB::unprepared(DB::raw($query)->getValue(new MySqlGrammar(DB::connection())));
         } else {
             DB::unprepared(DB::raw($query));
         }
@@ -268,7 +268,7 @@ class Schema extends IlluminateSchema
         $query = "ALTER TABLE {$appendSchema}{$table} PARTITION BY HASH({$hashColumn}) ";
         $query .= "PARTITIONS {$partitionsNumber};";
         if (version_compare(static::getAppVersion(),'10.0.0') >= 0) {
-            DB::unprepared(DB::raw($query)->getValue(new MySqlGrammar()));
+            DB::unprepared(DB::raw($query)->getValue(new MySqlGrammar(DB::connection())));
         } else {
             DB::unprepared(DB::raw($query));
         }
@@ -289,7 +289,7 @@ class Schema extends IlluminateSchema
         $query = "ALTER TABLE {$appendSchema}{$table} PARTITION BY KEY() ";
         $query .= "PARTITIONS {$partitionsNumber};";
         if (version_compare(static::getAppVersion(),'10.0.0') >= 0) {
-            DB::unprepared(DB::raw($query)->getValue(new MySqlGrammar()));
+            DB::unprepared(DB::raw($query)->getValue(new MySqlGrammar(DB::connection())));
         } else {
             DB::unprepared(DB::raw($query));
         }
@@ -360,7 +360,7 @@ class Schema extends IlluminateSchema
     {
         $query = "ALTER TABLE {$table} OPTIMIZE PARTITION " . implode(', ', $partitions);
         if (version_compare(static::getAppVersion(),'10.0.0') >= 0) {
-            return DB::select(DB::raw($query)->getValue(new MySqlGrammar()));
+            return DB::select(DB::raw($query)->getValue(new MySqlGrammar(DB::connection())));
         } else {
             return DB::select(DB::raw($query));
         }
@@ -376,7 +376,7 @@ class Schema extends IlluminateSchema
     {
         $query = "ALTER TABLE {$table} ANALYZE PARTITION " . implode(', ', $partitions);
         if (version_compare(static::getAppVersion(),'10.0.0') >= 0) {
-            return DB::select(DB::raw($query)->getValue(new MySqlGrammar()));
+            return DB::select(DB::raw($query)->getValue(new MySqlGrammar(DB::connection())));
         } else {
             return DB::select(DB::raw($query));
         }
@@ -394,7 +394,7 @@ class Schema extends IlluminateSchema
     {
         $query = "ALTER TABLE {$table} REPAIR PARTITION " . implode(', ', $partitions);
         if (version_compare(static::getAppVersion(),'10.0.0') >= 0) {
-            return DB::select(DB::raw($query)->getValue(new MySqlGrammar()));
+            return DB::select(DB::raw($query)->getValue(new MySqlGrammar(DB::connection())));
         } else {
             return DB::select(DB::raw($query));
         }
@@ -410,7 +410,7 @@ class Schema extends IlluminateSchema
     {
         $query = "ALTER TABLE {$table} CHECK PARTITION " . implode(', ', $partitions);
         if (version_compare(static::getAppVersion(),'10.0.0') >= 0) {
-            return DB::select(DB::raw($query)->getValue(new MySqlGrammar()));
+            return DB::select(DB::raw($query)->getValue(new MySqlGrammar(DB::connection())));
         } else {
             return DB::select(DB::raw($query));
         }
